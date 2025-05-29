@@ -7,7 +7,7 @@ import { StackContext } from "sst/constructs";
 import {ConfigStack} from "./ConfigStack";
 import {apiFnBuilder} from "./helpers/utils";
 
-export function ProtectedApiStack({ stack }: StackContext) {
+export function PublicApiStack({ stack }: StackContext) {
 
     const { globalCognitoUserPool, mongoDbSecret } = sst.use(ConfigStack)
 
@@ -57,11 +57,11 @@ export function ProtectedApiStack({ stack }: StackContext) {
         },
 
         routes: {
-            // "GET /{academyName}/me": apiFnBuilder({
-            //     apiName,
-            //     stage: stack.stage,
-            //     handler: `${folderPrefix}/me/actions.getMe`,
-            // }),
+            "POST /{academyName}/auth/login": apiFnBuilder({
+                apiName,
+                stage: stack.stage,
+                handler: `${folderPrefix}/auth/actions.login`,
+            }),
 
         },
     });

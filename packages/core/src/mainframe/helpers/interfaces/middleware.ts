@@ -26,6 +26,10 @@ export interface IAPIGatewayProxyEventWithUser extends IAPIGatewayEventRequestCo
     user: IUser;
 }
 
+export interface IAPIGatewayProxyEvent extends IAPIGatewayEventRequestContextLambdaAuthorizer {
+    academy: IAcademy;
+}
+
 export interface IAPIGatewayProxyEventWithUserAndBody<TBody = object> extends IAPIGatewayProxyEventWithUser {
     body: TBody;
 }

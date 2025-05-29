@@ -1,8 +1,3 @@
-import axios from "axios";
-import { verify } from "jsonwebtoken";
-import jwkToPem from "jwk-to-pem";
-import {adminGetUser} from "@lms-backend/core/mainframe/helpers/aws/cognito";
-import {UserModel} from "@lms-backend/core/mainframe/database/mongodb/models/user.model";
 import {closeMongodbConnection, getMongodbConnection} from "@lms-backend/core/mainframe/database/mongodb/connect";
 import {AcademyModel} from "@lms-backend/core/mainframe/database/mongodb/models/academy.model";
 import {moduleTypes} from "../../../../../stacks/helpers/stackConstants";
