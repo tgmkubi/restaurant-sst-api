@@ -1,0 +1,52 @@
+{
+  "name": "lms-backend",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "export AWS_PROFILE=personal && sst dev --stage local",
+    "dev:local": "sst dev --stage local",
+    "dev:beta": "sst dev --stage beta",
+    "build": "sst build",
+    "deploy": "sst deploy",
+    "deploy:beta": "sst deploy --stage beta",
+    "deploy:prod": "sst deploy --stage prod",
+    "deploy:local": "export AWS_PROFILE=personal && sst deploy --stage local",
+    "remove": "sst remove",
+    "console": "sst console",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.2",
+    "aws-cdk-lib": "2.110.1",
+    "constructs": "10.3.0",
+    "sst": "2.36.7",
+    "typescript": "^5.4.5"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "@aws-cdk/aws-apigatewayv2": "^1.204.0",
+    "@aws-cdk/aws-apigatewayv2-alpha": "^2.111.0-alpha.0",
+    "@aws-cdk/aws-apigatewayv2-authorizers-alpha": "^2.113.0-alpha.0",
+    "@aws-sdk/client-api-gateway": "^3.582.0",
+    "@aws-sdk/client-apigatewayv2": "^3.620.1",
+    "@aws-sdk/client-cloudwatch-logs": "^3.687.0",
+    "@aws-sdk/client-scheduler": "^3.609.0",
+    "@aws-sdk/util-dynamodb": "^3.462.0",
+    "@faker-js/faker": "^9.8.0",
+    "@types/http-errors": "^2.0.4",
+    "@types/papaparse": "^5.3.15",
+    "aws-jwt-verify": "^4.0.1",
+    "http-errors": "^2.0.0",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.15.0",
+    "node-fetch": "^3.3.2",
+    "papaparse": "^5.5.2"
+  }
+}

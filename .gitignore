@@ -1,0 +1,25 @@
+# dependencies
+node_modules
+
+# sst
+.sst
+.build
+
+# opennext
+.open-next
+
+# misc
+.DS_Store
+
+# local env files
+.env*.local
+
+yarn-error.log
+yarn.lock
+package-lock.json
+.idea
+.env.local
+.env.*.local
+.env.beta
+.env.prod
+.rds.env
