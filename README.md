@@ -9,4 +9,4 @@ Environment variables will need to set up in your .zshrc or .bashrc to spin up y
 yarn
 yarn dev:local
 ```
-Model is Academy Multi-tenant. You can change academyId into your tenantId
+Model is Academy Multi-tenant. You can change companyId into your tenantId

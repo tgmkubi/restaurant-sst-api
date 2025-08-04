@@ -21,7 +21,7 @@ const mongoDbMiddleware = (opts: IMongoDbMiddlewareOptions) => {
 
         console.log("initMongoDbConnection", initMongoDbConnection)
         if (initMongoDbConnection) {
-            await getMongodbConnection(event?.user?.academyId);
+            await getMongodbConnection(event?.user?.companyId);
         }
     };
 

@@ -1,10 +1,10 @@
-import {lambdaHandlerAcademy} from "@lms-backend/core/mainframe/core/middy";
-import {apiResponse} from "@lms-backend/core/mainframe/helpers/response";
-import {adminCreateUser, adminDeleteUser} from "@lms-backend/core/mainframe/helpers/aws/cognito";
+import {lambdaHandlerAcademy} from "@kss-backend/core/mainframe/core/middy";
+import {apiResponse} from "@kss-backend/core/mainframe/helpers/response";
+import {adminCreateUser, adminDeleteUser} from "@kss-backend/core/mainframe/helpers/aws/cognito";
 import {createAdminUserValidator} from "./validators";
-import {UserModel} from "@lms-backend/core/mainframe/database/mongodb/models/user.model";
+import {UserModel} from "@kss-backend/core/mainframe/database/mongodb/models/user.model";
 import createError from "http-errors";
-import {UserRolesEnum} from "@lms-backend/core/mainframe/database/interfaces/user";
+import {UserRolesEnum} from "@kss-backend/core/mainframe/database/interfaces/user";
 
 export const createUser = lambdaHandlerAcademy(
     async (event: any) => {
@@ -32,7 +32,7 @@ export const createUser = lambdaHandlerAcademy(
                     Value: lastName,
                 },
                 {
-                    Name: "custom:academyId",
+                    Name: "custom:companyId",
                     Value: event.academy.id
                 }
             ]
@@ -48,7 +48,7 @@ export const createUser = lambdaHandlerAcademy(
                 firstName,
                 lastName,
                 role: role || UserRolesEnum.ADMIN,
-                academyId: event.academy.id,
+                companyId: event.academy.id,
                 createdBy: event.user.id
             })
         } else {

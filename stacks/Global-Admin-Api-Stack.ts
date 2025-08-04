@@ -6,8 +6,8 @@ import * as sst from "sst/constructs";
 import { StackContext } from "sst/constructs";
 import {ConfigStack} from "./ConfigStack";
 import {apiFnBuilder} from "./helpers/utils";
-import {listUsers} from "@lms-backend/functions/src/Global-Admin-Api/functions/users/actions";
-import {getAcademyAdmin} from "@lms-backend/functions/src/Global-Admin-Api/functions/academy/actions";
+// import {listUsers} from "@kss-backend/functions/src/Global-Admin-Api/functions/users/actions";
+// import {getAcademyAdmin} from "@kss-backend/functions/src/Global-Admin-Api/functions/academy/actions";
 
 export function GlobalAdminApiStack({ stack }: StackContext) {
 
@@ -132,6 +132,23 @@ export function GlobalAdminApiStack({ stack }: StackContext) {
                 stage: stack.stage,
                 handler: `${folderPrefix}/academy/actions.deleteAcademyAdmin`,
                 permissions: ["cognito-idp:AdminDeleteUser"],
+            }),
+            // ----------------- COMPANY -----------------
+            "POST /company": apiFnBuilder({
+                apiName,
+                stage: stack.stage,
+                handler: `${folderPrefix}/company/actions.createCompany`,
+                permissions: ["cognito-idp:CreateUserPool", "cognito-idp:CreateUserPoolClient"],
+            }),
+            "GET /company": apiFnBuilder({
+                apiName,
+                stage: stack.stage,
+                handler: `${folderPrefix}/company/actions.listCompany`,
+            }),
+            "GET /company/{id}": apiFnBuilder({
+                apiName,
+                stage: stack.stage,
+                handler: `${folderPrefix}/company/actions.getCompany`,
             }),
         },
     });

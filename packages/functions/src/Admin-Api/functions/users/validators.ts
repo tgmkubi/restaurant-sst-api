@@ -1,5 +1,5 @@
-import { exportModelPropKey, exportModelPropKeyValue } from "@lms-backend/core/mainframe/helpers/utils";
-import {UserMiddyModel} from "@lms-backend/core/mainframe/database/middyModels";
+import { exportModelPropKey, exportModelPropKeyValue } from "@kss-backend/core/mainframe/helpers/utils";
+import {UserMiddyModel} from "@kss-backend/core/mainframe/database/middyModels";
 
 export const createAdminUserValidator = {
     type: "object",

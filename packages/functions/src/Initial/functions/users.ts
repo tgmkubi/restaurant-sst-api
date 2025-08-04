@@ -1,7 +1,7 @@
-import {dataKeyList} from "@lms-backend/core/mainframe/database/identifiers";
-import {userData} from "@lms-backend/core/mainframe/database/modelGenerators";
-import {userRoles} from "../../../../../stacks/helpers/stackConstants";
-import {marshall} from "@aws-sdk/util-dynamodb";
+import { dataKeyList } from "@kss-backend/core/mainframe/database/identifiers";
+import { userData } from "@kss-backend/core/mainframe/database/modelGenerators";
+import { userRoles } from "../../../../../stacks/helpers/stackConstants";
+import { marshall } from "@aws-sdk/util-dynamodb";
 
 export const createAdminUserModel = async (event: any) => {
     const { firstName, lastName, email } = event;

@@ -8,9 +8,9 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    role: { type: String, enum: UserRolesEnum, default: UserRolesEnum.STUDENT },
-    academyId: { type: String, required: true },
-
+    role: { type: String, enum: UserRolesEnum, default: UserRolesEnum.CUSTOMER, required: true },
+    companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
+    
     createdBy: { type: String, required: true },
     updatedBy: { type: String },
 }, { timestamps: true });

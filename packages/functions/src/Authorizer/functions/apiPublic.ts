@@ -1,5 +1,5 @@
-import {closeMongodbConnection, getMongodbConnection} from "@lms-backend/core/mainframe/database/mongodb/connect";
-import {AcademyModel} from "@lms-backend/core/mainframe/database/mongodb/models/academy.model";
+import {closeMongodbConnection, getMongodbConnection} from "@kss-backend/core/mainframe/database/mongodb/connect";
+import {AcademyModel} from "@kss-backend/core/mainframe/database/mongodb/models/academy.model";
 import {moduleTypes} from "../../../../../stacks/helpers/stackConstants";
 
 const generateAuthResponse = (principalId: string, effect: string, resource: string = "*") => {

@@ -1,4 +1,4 @@
-import {AcademyMiddyModel} from "@lms-backend/core/mainframe/database/middyModels";
+import {AcademyMiddyModel} from "@kss-backend/core/mainframe/database/middyModels";
 
 export const createAcademyValidator = {
     type: "object",

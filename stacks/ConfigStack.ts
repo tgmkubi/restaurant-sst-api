@@ -35,7 +35,7 @@ export function ConfigStack({ app, stack }: StackContext) {
                     email: true,
                 },
                 customAttributes: {
-                    academyId: new cognito.StringAttribute({ mutable: true }),
+                    companyId: new cognito.StringAttribute({ mutable: true }),
                 },
                 accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
                 removalPolicy: RemovalPolicy.DESTROY,
@@ -51,6 +51,11 @@ export function ConfigStack({ app, stack }: StackContext) {
             },
         },
     });
+    const adminsGroup = new cognito.CfnUserPoolGroup(stack, "AdminsGroup", {
+        groupName: "Admins",
+        userPoolId: globalCognitoUserPool.cdk.userPool.userPoolId,
+        description: "Administrators group",
+    });
 
     const mongoDbSecret = new secrets_manager.Secret(stack, "MongoDbSecret", {
         secretName: `${app.stage}-mongodb-secret`,
@@ -60,7 +65,6 @@ export function ConfigStack({ app, stack }: StackContext) {
         },
         removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-
 
     // ------------------- Custom Domain for API Settings -------------------
     // Active if you have any custom domain for your API

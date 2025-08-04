@@ -1,29 +1,30 @@
-import {lambdaHandlerGlobalAdmin} from "@kss-backend/core/mainframe/core/middy";
-import {apiResponse} from "@kss-backend/core/mainframe/helpers/response";
+import { lambdaHandlerGlobalAdmin } from "@kss-backend/core/mainframe/core/middy";
+import { apiResponse } from "@kss-backend/core/mainframe/helpers/response";
 import {
-    adminCreateUser, adminDeleteUser,
+    adminCreateUser,
+    adminDeleteUser,
     createUserPool,
     createUserPoolClient,
-    deleteUserPool, deleteUserPoolClient
+    deleteUserPool,
 } from "@kss-backend/core/mainframe/helpers/aws/cognito";
-import {createAcademyValidator} from "./validators";
+import { createCompanyValidator } from "./validators";
 import createError from "http-errors";
-import {AcademyModel} from "@kss-backend/core/mainframe/database/mongodb/models/academy.model";
+import { CompanyModel } from "@kss-backend/core/mainframe/database/mongodb/models/company.model";
 import {UserModel} from "@kss-backend/core/mainframe/database/mongodb/models/user.model";
 import {moduleTypes} from "../../../../../../stacks/helpers/stackConstants";
 import {createAcademyAdminUserValidator, createGlobalAdminUserValidator} from "../users/validators";
 import {UserRolesEnum} from "@kss-backend/core/mainframe/database/interfaces/user";
 import {closeMongodbConnection, getMongodbConnection} from "@kss-backend/core/mainframe/database/mongodb/connect";
 
-export const createAcademy = lambdaHandlerGlobalAdmin(
+export const createCompany = lambdaHandlerGlobalAdmin(
     async (event: any) => {
         const { name, displayName, description } = event.body;
 
-        const academy = await AcademyModel.findOne({
+        const company = await CompanyModel.findOne({
             name: name
         });
-        if (academy) {
-            throw new createError.Conflict("Academy with this name already exists");
+        if (company) {
+            throw new createError.Conflict("Company with this name already exists");
         }
 
         const resCognitoUserPool = await createUserPool({
@@ -75,7 +76,7 @@ export const createAcademy = lambdaHandlerGlobalAdmin(
             throw new createError.InternalServerError("Failed to create Cognito User Pool Client");
         }
 
-        const academyCreated = await AcademyModel.create({
+        const companyCreated = await CompanyModel.create({
             name,
             displayName: displayName || name,
             domain: `${name}.${process.env.DOMAIN}`,
@@ -87,23 +88,23 @@ export const createAcademy = lambdaHandlerGlobalAdmin(
 
 
         return apiResponse(200, {
-            academy: academyCreated
+            company: companyCreated
         });
     },
     {
-        requestValidator: createAcademyValidator,
+        requestValidator: createCompanyValidator,
         requiredPermissionGroups: [UserRolesEnum.GLOBAL_ADMIN],
         initMongoDbConnection: true
     },
 );
 
-export const listAcademy = lambdaHandlerGlobalAdmin(
+export const listCompany = lambdaHandlerGlobalAdmin(
     async (event: any) => {
 
-            const academies = await AcademyModel.find({})
+            const companies = await CompanyModel.find({})
 
             return apiResponse(200, {
-                academies
+                companies
             });
     },{
         requiredPermissionGroups: [UserRolesEnum.GLOBAL_ADMIN],
@@ -111,17 +112,17 @@ export const listAcademy = lambdaHandlerGlobalAdmin(
     },
 );
 
-export const getAcademy = lambdaHandlerGlobalAdmin(
+export const getCompany = lambdaHandlerGlobalAdmin(
     async (event: any) => {
         const { id } = event.pathParameters;
 
-        const academy = await AcademyModel.findOne({ _id: id });
-        if (!academy) {
-            throw new createError.NotFound("Academy Not found");
+        const company = await CompanyModel.findOne({ _id: id });
+        if (!company) {
+            throw new createError.NotFound("Company Not found");
         }
 
         return apiResponse(200, {
-            academy,
+            company,
         });
     },
     {
@@ -130,20 +131,20 @@ export const getAcademy = lambdaHandlerGlobalAdmin(
     },
 );
 
-export const deleteAcademy = lambdaHandlerGlobalAdmin(
+export const deleteCompany = lambdaHandlerGlobalAdmin(
     async (event: any) => {
         const { id } = event.pathParameters;
 
-        const academy = await AcademyModel.findOne({ _id: id});
-        if (!academy) {
-            throw new createError.NotFound("Academy not found");
+        const company = await CompanyModel.findOne({ _id: id});
+        if (!company) {
+            throw new createError.NotFound("Company not found");
         }
 
-        await deleteUserPool(academy.cognitoUserPoolId);
-        await academy.deleteOne();
+        await deleteUserPool(company.cognitoUserPoolId);
+        await company.deleteOne();
 
         return apiResponse(200, {
-            message: "Academy deleted successfully",
+            message: "Company deleted successfully",
         });
     },
     {
@@ -152,22 +153,22 @@ export const deleteAcademy = lambdaHandlerGlobalAdmin(
     },
 );
 
-export const createAcademyAdmin = lambdaHandlerGlobalAdmin(
+export const createCompanyAdmin = lambdaHandlerGlobalAdmin(
     async (event: any) => {
 
         const { id } = event.pathParameters;
         const { email, firstName, lastName } = event.body;
 
-        const academy = await AcademyModel.findOne({
+        const company = await CompanyModel.findOne({
             _id: id,
         });
-        if (!academy) {
+        if (!company) {
             throw new createError.NotFound("Academy not found");
         }
-        const companyId = `ACADEMY_${academy._id}`;
+        const companyId = `COMPANY_${company._id}`;
 
         const resCognito = await adminCreateUser(
-            academy.cognitoUserPoolId,
+            company.cognitoUserPoolId,
             email,
             [
                 {
@@ -226,18 +227,18 @@ export const createAcademyAdmin = lambdaHandlerGlobalAdmin(
     },
 );
 
-export const listAcademyAdmins = lambdaHandlerGlobalAdmin(
+export const listCompanyAdmins = lambdaHandlerGlobalAdmin(
     async (event: any) => {
 
         const { id } = event.pathParameters;
 
-        const academy = await AcademyModel.findOne({
+        const company = await CompanyModel.findOne({
             _id: id,
         });
-        if (!academy) {
-            throw new createError.NotFound("Academy not found");
+        if (!company) {
+            throw new createError.NotFound("Company not found");
         }
-        const companyId = `ACADEMY_${academy._id}`;
+        const companyId = `COMPANY_${company._id}`;
 
         // Close global database connection
         await closeMongodbConnection();
@@ -265,13 +266,13 @@ export const getAcademyAdmin = lambdaHandlerGlobalAdmin(
 
         const { id, userId } = event.pathParameters;
 
-        const academy = await AcademyModel.findOne({
+        const company = await CompanyModel.findOne({
             _id: id,
         });
-        if (!academy) {
-            throw new createError.NotFound("Academy not found");
+        if (!company) {
+            throw new createError.NotFound("Company not found");
         }
-        const companyId = `ACADEMY_${academy._id}`;
+        const companyId = `COMPANY_${company._id}`;
 
         // Close global database connection
         await closeMongodbConnection();
@@ -294,19 +295,19 @@ export const getAcademyAdmin = lambdaHandlerGlobalAdmin(
     },
 );
 
-export const deleteAcademyAdmin = lambdaHandlerGlobalAdmin(
+export const deleteCompanyAdmin = lambdaHandlerGlobalAdmin(
     async (event: any) => {
 
         const { id, userId } = event.pathParameters;
         console.log(id)
 
-        const academy = await AcademyModel.findOne({
+        const company = await CompanyModel.findOne({
             _id: id,
         });
-        if (!academy) {
-            throw new createError.NotFound("Academy not found");
+        if (!company) {
+            throw new createError.NotFound("Company not found");
         }
-        const companyId = `ACADEMY_${academy._id}`;
+        const companyId = `COMPANY_${company._id}`;
 
         // Close global database connection
         await closeMongodbConnection();
@@ -321,12 +322,12 @@ export const deleteAcademyAdmin = lambdaHandlerGlobalAdmin(
             throw new createError.NotFound("User not found");
         }
 
-        await adminDeleteUser(academy.cognitoUserPoolId, user.cognitoUsername);
+        await adminDeleteUser(company.cognitoUserPoolId, user.cognitoUsername);
         await user.deleteOne();
         await closeMongodbConnection();
 
         return apiResponse(200, {
-            message: "Academy Admin deleted successfully",
+            message: "Company Admin deleted successfully",
         });
     },
     {

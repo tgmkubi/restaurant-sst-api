@@ -1,11 +1,11 @@
-import {lambdaHandlerGlobalAdmin} from "@lms-backend/core/mainframe/core/middy";
-import {apiResponse} from "@lms-backend/core/mainframe/helpers/response";
-import {adminCreateUser, adminDeleteUser} from "@lms-backend/core/mainframe/helpers/aws/cognito";
+import {lambdaHandlerGlobalAdmin} from "@kss-backend/core/mainframe/core/middy";
+import {apiResponse} from "@kss-backend/core/mainframe/helpers/response";
+import {adminCreateUser, adminDeleteUser} from "@kss-backend/core/mainframe/helpers/aws/cognito";
 import {createGlobalAdminUserValidator} from "./validators";
-import {UserModel} from "@lms-backend/core/mainframe/database/mongodb/models/user.model";
+import {UserModel} from "@kss-backend/core/mainframe/database/mongodb/models/user.model";
 import {moduleTypes} from "../../../../../../stacks/helpers/stackConstants";
 import createError from "http-errors";
-import {UserRolesEnum} from "@lms-backend/core/mainframe/database/interfaces/user";
+import {UserRolesEnum} from "@kss-backend/core/mainframe/database/interfaces/user";
 
 export const createUser = lambdaHandlerGlobalAdmin(
     async (event: any) => {
@@ -29,7 +29,7 @@ export const createUser = lambdaHandlerGlobalAdmin(
                     Value: lastName,
                 },
                 {
-                    Name: "custom:academyId",
+                    Name: "custom:companyId",
                     Value: moduleTypes.GLOBAL
                 }
             ]
@@ -45,7 +45,7 @@ export const createUser = lambdaHandlerGlobalAdmin(
                 firstName,
                 lastName,
                 role: UserRolesEnum.GLOBAL_ADMIN,
-                academyId: moduleTypes.GLOBAL,
+                companyId: moduleTypes.GLOBAL,
                 createdBy: event.user.id
             })
         } else {

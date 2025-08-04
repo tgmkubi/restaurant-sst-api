@@ -26,7 +26,7 @@ export const createdEventStep = ({stack, moduleType, extra}: IStepInput) => {
     return new tasks.EventBridgePutEvents(stack, `Send CREATED - ${moduleType} Event to EventBridge ${extra}`, {
         entries: [
             {
-                source: `com.lms.${moduleType.toLowerCase()}`,
+                source: `com.kss.${moduleType.toLowerCase()}`,
                 detailType: `CREATED_${moduleType}`,
                 detail: sfn.TaskInput.fromJsonPathAt("$.eventDetail"),
             },
@@ -68,14 +68,14 @@ export const errorEventStep = ({stack, moduleType, extra}: IStepInput) => {
         {
             entries: [
                 {
-                    source: `com.lms.${moduleType.toLowerCase()}`,
+                    source: `com.kss.${moduleType.toLowerCase()}`,
                     detailType: `${eventOps.ERROR}_${moduleType}`,
                     detail: sfn.TaskInput.fromObject({
                         error: sfn.JsonPath.stringAt("$.createErrorOutput.Error"),
                         cause: sfn.JsonPath.stringAt("$.createErrorOutput.Cause"),
                         idempotencyId: sfn.JsonPath.stringAt("$.eventDetail.idempotencyId"),
                         userId: sfn.JsonPath.stringAt("$.eventDetail.userId"),
-                        academyId: sfn.JsonPath.stringAt("$.eventDetail.academyId"),
+                        companyId: sfn.JsonPath.stringAt("$.eventDetail.companyId"),
                     }),
                 },
             ],

@@ -1,10 +1,10 @@
 import axios from "axios";
 import { verify } from "jsonwebtoken";
 import jwkToPem from "jwk-to-pem";
-import {adminGetUser} from "@lms-backend/core/mainframe/helpers/aws/cognito";
-import {UserModel} from "@lms-backend/core/mainframe/database/mongodb/models/user.model";
-import {closeMongodbConnection, getMongodbConnection} from "@lms-backend/core/mainframe/database/mongodb/connect";
-import {AcademyModel} from "@lms-backend/core/mainframe/database/mongodb/models/academy.model";
+import {adminGetUser} from "@kss-backend/core/mainframe/helpers/aws/cognito";
+import {UserModel} from "@kss-backend/core/mainframe/database/mongodb/models/user.model";
+import {closeMongodbConnection, getMongodbConnection} from "@kss-backend/core/mainframe/database/mongodb/connect";
+import {AcademyModel} from "@kss-backend/core/mainframe/database/mongodb/models/academy.model";
 import {moduleTypes} from "../../../../../stacks/helpers/stackConstants";
 
 const generateAuthResponse = (principalId: string, effect: string, resource: string = "*") => {
@@ -63,7 +63,7 @@ export const authorizer = async (event: any) => {
     let email = "";
     let cognitoGroups = null;
     let cognitoUsername = "";
-    let academyId = undefined;
+    let companyId = undefined;
 
     verify(token, pem, { algorithms: ["RS256"] }, function (err, decodedToken: any) {
         if (err) return generateAuthResponse("user", "Deny", event.methodArn);
@@ -74,7 +74,7 @@ export const authorizer = async (event: any) => {
         email = decodedToken?.email;
         cognitoGroups = decodedToken["cognito:groups"] ? decodedToken["cognito:groups"].join(",") : "";
         cognitoUsername = decodedToken["cognito:username"];
-        academyId = decodedToken["custom:academyId"] || null;
+        companyId = decodedToken["custom:companyId"] || null;
     });
 
     console.log("USER CHECKING WITH USERNAME IS ->", cognitoUsername)
@@ -85,7 +85,7 @@ export const authorizer = async (event: any) => {
     }
     console.log("sub", sub)
     // Fetch user from MongoDB
-    await getMongodbConnection(academyId);
+    await getMongodbConnection(companyId);
     let dbUser = await UserModel.findOne({
         cognitoSub: sub,
     });

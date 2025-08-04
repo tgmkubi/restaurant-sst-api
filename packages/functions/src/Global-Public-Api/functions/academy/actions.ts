@@ -1,7 +1,7 @@
-import {lambdaHandlerGlobalPublic} from "@lms-backend/core/mainframe/core/middy";
-import {initiateAuth} from "@lms-backend/core/mainframe/helpers/aws/cognito";
-import {apiResponse} from "@lms-backend/core/mainframe/helpers/response";
-import {AcademyModel} from "@lms-backend/core/mainframe/database/mongodb/models/academy.model";
+import {lambdaHandlerGlobalPublic} from "@kss-backend/core/mainframe/core/middy";
+import {initiateAuth} from "@kss-backend/core/mainframe/helpers/aws/cognito";
+import {apiResponse} from "@kss-backend/core/mainframe/helpers/response";
+import {AcademyModel} from "@kss-backend/core/mainframe/database/mongodb/models/academy.model";
 import createError from "http-errors";
 
 export const getAcademy = lambdaHandlerGlobalPublic(

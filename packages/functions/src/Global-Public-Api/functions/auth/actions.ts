@@ -1,8 +1,8 @@
-import {lambdaHandlerGlobalPublic} from "@lms-backend/core/mainframe/core/middy";
-import {apiResponse} from "@lms-backend/core/mainframe/helpers/response"
+import {lambdaHandlerGlobalPublic} from "@kss-backend/core/mainframe/core/middy";
+import {apiResponse} from "@kss-backend/core/mainframe/helpers/response"
 import {
     initiateAuth
-} from "@lms-backend/core/mainframe/helpers/aws/cognito";
+} from "@kss-backend/core/mainframe/helpers/aws/cognito";
 
 export const login = lambdaHandlerGlobalPublic(
     async (event: any) => {
@@ -16,5 +16,7 @@ export const login = lambdaHandlerGlobalPublic(
             auth: res
         });
     },
-    {},
+    {
+        initMongoDbConnection: false,
+    },
 );

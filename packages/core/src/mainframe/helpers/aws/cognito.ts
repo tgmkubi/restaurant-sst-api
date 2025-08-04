@@ -25,7 +25,11 @@ import {
     ListIdentityProvidersCommandInput,
     DescribeIdentityProviderCommand,
     DescribeIdentityProviderCommandInput,
-    DescribeUserPoolCommand, InitiateAuthCommand, AuthFlowType,
+    DescribeUserPoolCommand,
+    InitiateAuthCommand,
+    InitiateAuthCommandOutput,
+    AuthFlowType,
+    ChallengeName,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { deleteDuplicatesFromArray } from "../utils";
 export { GroupType };
@@ -263,7 +267,8 @@ export const initiateAuth = async (clientId: string | undefined, username: strin
         },
     });
     try {
-        const res = await cognitoIdpClient.send(command);
+        const res = await cognitoIdpClient.send(command) as InitiateAuthCommandOutput;
+        console.log("InitiateAuth response:", res);
         return {
             success: true,
             errorMessage: null,
@@ -272,6 +277,9 @@ export const initiateAuth = async (clientId: string | undefined, username: strin
             refreshToken: res.AuthenticationResult?.RefreshToken,
             expiresIn: res.AuthenticationResult?.ExpiresIn,
             tokenType: res.AuthenticationResult?.TokenType,
+            ChallengeName: res.ChallengeName || null,
+            Session: res.Session || null,
+            ChallengeParameters: res.ChallengeParameters || null,
         }
     } catch (error: any) {
         return {

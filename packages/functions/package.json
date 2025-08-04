@@ -1,5 +1,5 @@
 {
-  "name": "@lms-backend/functions",
+  "name": "@kss-backend/functions",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

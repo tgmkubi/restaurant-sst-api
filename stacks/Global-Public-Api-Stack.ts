@@ -9,7 +9,7 @@ import {ConfigStack} from "./ConfigStack";
 
 export function GlobalPublicApiStack({ stack }: StackContext) {
 
-    const { globalCognitoUserPool } = sst.use(ConfigStack);
+    const { globalCognitoUserPool, mongoDbSecret } = sst.use(ConfigStack);
 
     // ------------------- DEFAULTS -------------------
     const moduleName = "GlobalPublicApi";
@@ -23,10 +23,23 @@ export function GlobalPublicApiStack({ stack }: StackContext) {
         retention: logs.RetentionDays.ONE_MONTH,
     });
 
-
+    const authorizerFn = new sst.Function(stack, `${moduleName}Authorizer`, {
+        handler: `packages/functions/src/Authorizer/functions/apiPublic.authorizer`,
+        functionName: `${stack.stage}-${moduleName}-Authorizer`,
+        permissions: ["cognito-idp:ProtectedGetUser", "secretsmanager:GetSecretValue"],
+        environment: {
+            MONGO_DB_SECRET_NAME: mongoDbSecret.secretName,
+        }
+    });
 
     const globalPublicApi = new sst.Api(stack, moduleName, {
-        authorizers: {},
+        authorizers: {
+            lambdaAuthorizer: {
+                type: "lambda",
+                function: authorizerFn,
+                //resultsCacheTtl: "30 minutes",
+            },
+        },
         defaults: {
             function: {
                 environment: {},
@@ -56,6 +69,24 @@ export function GlobalPublicApiStack({ stack }: StackContext) {
                 handler: `${folderPrefix}/academy/actions.getAcademy`,
             }),
 
+            /* const createGlobalAdminUserFn = new sst.Function(stack, "CreateGlobalAdminUserFn", {
+                handler: `${functionFolderPrefix}/Users/functions/initial.createGlobalAdminUser`,
+                environment: {
+                    MONGO_DB_SECRET_NAME: mongoDbSecret.secretName,
+                },
+                permissions: ["secretsmanager:GetSecretValue"],
+            }); */
+
+            "GET /test/uri": apiFnBuilder({
+                apiName,
+                stage: stack.stage,
+                handler: `${folderPrefix}/test/actions.getUri`,
+                environment: {
+                    MONGO_DB_SECRET_NAME: mongoDbSecret.secretName,
+                    MONGO_DB_SECRET_VALUE: mongoDbSecret.secretValue,
+                },
+                permissions: ["secretsmanager:GetSecretValue"],
+            }),
         },
     });
 
@@ -74,6 +105,6 @@ export function GlobalPublicApiStack({ stack }: StackContext) {
         ApiId: globalPublicApi.id,
         ApiHttpId: globalPublicApi.httpApiId,
         ApiEndpoint: globalPublicApi.url,
-        ApiBaseUrl: `https://api.global.${process.env.DOMAIN}/admin/p3`,
+        ApiBaseUrl: `https://api.global.${process.env.DOMAIN}/public/p3`,
     });
 }

@@ -9,7 +9,7 @@ import {apiFnBuilder} from "./helpers/utils";
 
 export function ProtectedApiStack({ stack }: StackContext) {
 
-    const { globalCognitoUserPool, mongoDbSecret } = sst.use(ConfigStack)
+    const { globalCognitoUserPool, mongoDbSecret } = sst.use(ConfigStack);
 
     // ------------------- DEFAULTS -------------------
     const moduleName = "ProtectedApi";

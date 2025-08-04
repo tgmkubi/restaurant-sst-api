@@ -1,5 +1,5 @@
-import { exportModelPropKey, exportModelPropKeyValue } from "@lms-backend/core/mainframe/helpers/utils";
-import {UserMiddyModel} from "@lms-backend/core/mainframe/database/middyModels";
+import { exportModelPropKey, exportModelPropKeyValue } from "@kss-backend/core/mainframe/helpers/utils";
+import {UserMiddyModel} from "@kss-backend/core/mainframe/database/middyModels";
 
 export const createGlobalAdminUserValidator = {
     type: "object",
@@ -30,13 +30,13 @@ export const createAcademyAdminUserValidator = {
                 ...exportModelPropKeyValue(UserMiddyModel, UserMiddyModel.properties.email),
                 ...exportModelPropKeyValue(UserMiddyModel, UserMiddyModel.properties.firstName),
                 ...exportModelPropKeyValue(UserMiddyModel, UserMiddyModel.properties.lastName),
-                ...exportModelPropKeyValue(UserMiddyModel, UserMiddyModel.properties.academyId),
+                ...exportModelPropKeyValue(UserMiddyModel, UserMiddyModel.properties.companyId),
             },
             required: [
                 exportModelPropKey(UserMiddyModel, UserMiddyModel.properties.email),
                 exportModelPropKey(UserMiddyModel, UserMiddyModel.properties.firstName),
                 exportModelPropKey(UserMiddyModel, UserMiddyModel.properties.lastName),
-                exportModelPropKey(UserMiddyModel, UserMiddyModel.properties.academyId),
+                exportModelPropKey(UserMiddyModel, UserMiddyModel.properties.companyId),
             ],
         },
     },

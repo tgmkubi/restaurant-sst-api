@@ -1,6 +1,6 @@
 import { APIGatewayEventRequestContextLambdaAuthorizer } from "aws-lambda";
 import {IUser} from "../../database/interfaces/user";
-import {IAcademy} from "../../database/interfaces/academy";
+import {IAcademy, IAcademyData} from "../../database/interfaces/academy";
 
 export type IPermissionGroups = {
     requiredPermissionGroups: string[] | undefined;
@@ -20,6 +20,14 @@ interface ILambdaContext {
 
 interface IAPIGatewayEventRequestContextLambdaAuthorizer
     extends APIGatewayEventRequestContextLambdaAuthorizer<ILambdaContext> {}
+
+export interface IAPIGatewayProxyEventPublic extends IAPIGatewayEventRequestContextLambdaAuthorizer {
+    academy: IAcademyData;
+    body: {
+        email: string;
+        password: string;
+    }
+}
 
 export interface IAPIGatewayProxyEventWithUser extends IAPIGatewayEventRequestContextLambdaAuthorizer {
     academy: IAcademy;

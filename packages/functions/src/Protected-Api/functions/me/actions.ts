@@ -1,8 +1,8 @@
-import {lambdaHandlerAcademy} from "@lms-backend/core/mainframe/core/middy";
-import {apiResponse} from "@lms-backend/core/mainframe/helpers/response";
-import {UserModel} from "@lms-backend/core/mainframe/database/mongodb/models/user.model";
+import {lambdaHandlerAcademy} from "@kss-backend/core/mainframe/core/middy";
+import {apiResponse} from "@kss-backend/core/mainframe/helpers/response";
+import {UserModel} from "@kss-backend/core/mainframe/database/mongodb/models/user.model";
 import createError from "http-errors";
-import {IAPIGatewayProxyEventWithUser} from "@lms-backend/core/mainframe/helpers/interfaces/middleware";
+import {IAPIGatewayProxyEventWithUser} from "@kss-backend/core/mainframe/helpers/interfaces/middleware";
 
 
 export const getMe = lambdaHandlerAcademy(

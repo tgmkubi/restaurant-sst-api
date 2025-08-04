@@ -76,7 +76,7 @@ export function InitialStack({ app, stack }: StackContext) {
                     Value: process.env.DEFAULT_USER_LAST_NAME,
                 },
                 {
-                    Name: "custom:academyId",
+                    Name: "custom:companyId",
                     Value: moduleTypes.GLOBAL,
                 },
             ],
@@ -168,6 +168,9 @@ export function InitialStack({ app, stack }: StackContext) {
             roleArn: createInitialConfigSMSchedulerExecutionRole.roleArn,
             input: JSON.stringify({
                 schedulerName: `${stackName}-createInitialConfigSM-Starter-Rule`,
+                eventDetail: {
+                        hello: "hello from eventDetail",
+                },
             }),
         },
         name: `${stackName}-createInitialConfigSM-Starter-Rule`,

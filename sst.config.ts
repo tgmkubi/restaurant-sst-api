@@ -9,16 +9,16 @@ import {ProtectedApiStack} from "./stacks/Protected-Api-Stack";
 export default {
     config() {
         return {
-            name: "lms-backend",
-            region: "eu-west-1",
+            name: "kss-backend",
+            region: "eu-central-1",
         };
     },
     stacks(app) {
         const stackName = (stackName: string) => {
-            return `lms-${app.stage}-${stackName}-stack`;
+            return `kss-${app.stage}-${stackName}-stack`;
         };
         const stackId = (stackName: string) => {
-            return `lms-${stackName}`;
+            return `kss-${stackName}`;
         };
 
         const environment: { [name: string]: any } = {

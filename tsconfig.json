@@ -4,7 +4,7 @@
     "module": "ES2022",
     "moduleResolution": "Bundler",
     "paths": {
-      "@lms-backend/core/*": ["./packages/core/src/*"],
+      "@kss-backend/core/*": ["./packages/core/src/*"],
     }
   }
 }
