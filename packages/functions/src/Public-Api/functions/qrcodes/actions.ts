@@ -1,0 +1,1 @@
+export { handler as getQrCode } from "./get-qrcode";

@@ -6,7 +6,7 @@ import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as apigatewayv2_alpha from "@aws-cdk/aws-apigatewayv2-alpha";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
-
+import * as sst from "sst/constructs";
 
 import { StackContext, Cognito } from "sst/constructs";
 import {RemovalPolicy} from "aws-cdk-lib";
@@ -14,7 +14,20 @@ import {RemovalPolicy} from "aws-cdk-lib";
 export function ConfigStack({ app, stack }: StackContext) {
 
     // ------------------- DEFAULTS -------------------
-    // ------------------- DEFAULTS -------------------
+    // S3 bucket for media assets (public read, general purpose)
+        const mediaAssetsBucket = new sst.Bucket(stack, "MediaAssetsBucket", {
+            cdk: {
+                bucket: {
+                    publicReadAccess: true,
+                    removalPolicy: cdk.RemovalPolicy.RETAIN,
+                    autoDeleteObjects: false,
+                    cors: [{
+                        allowedMethods: [cdk.aws_s3.HttpMethods.GET, cdk.aws_s3.HttpMethods.PUT],
+                        allowedOrigins: ["*"]
+                    }],
+                }
+            }
+        });
 
     const mainTable = new dynamodb.Table(stack, "MainTable", {
         tableName: `${app.stage}-${process.env.MAIN_TABLE_NAME}`,
@@ -95,14 +108,15 @@ export function ConfigStack({ app, stack }: StackContext) {
     // });
     // ------------------- Custom Domain for API Settings -------------------
 
-
-
-    stack.addOutputs({});
+    stack.addOutputs({
+        MediaAssetsBucketName: mediaAssetsBucket.bucketName
+    });
 
     return {
         mainTable,
         globalCognitoUserPool,
-        mongoDbSecret
+        mongoDbSecret,
+        mediaAssetsBucket
     };
 
 }

@@ -1,6 +1,5 @@
-import {closeMongodbConnection, getMongodbConnection} from "@kss-backend/core/mainframe/database/mongodb/connect";
-import {AcademyModel} from "@kss-backend/core/mainframe/database/mongodb/models/academy.model";
-import {moduleTypes} from "../../../../../stacks/helpers/stackConstants";
+/* import {closeMongodbConnection, getMongodbConnection} from "@kss-backend/core/mainframe/database/mongodb/connect";
+import {moduleTypes} from "../../../../../stacks/helpers/stackConstants"; */
 
 const generateAuthResponse = (principalId: string, effect: string, resource: string = "*") => {
     return {
@@ -22,32 +21,13 @@ const generateAuthResponse = (principalId: string, effect: string, resource: str
 export const authorizer = async (event: any) => {
 
     const { authorization } = event.headers;
-    const { academyName } = event.pathParameters;
-    console.log("academyName",academyName)
 
     const {MONGO_DB_SECRET_NAME} = process.env || {};
-    await closeMongodbConnection();
-    await getMongodbConnection(moduleTypes.GLOBAL);
-
-
-    const academyDb = await AcademyModel.findOne({
-        name: academyName
-    })
-    if(!academyDb) return generateAuthResponse("user", "Deny", event.methodArn);
-
-
-    const academy = {
-        id: academyDb._id,
-        ...academyDb.toJSON()
-    };
+    // Academy ile ilgili kodlar kaldırıldı. Artık bu fonksiyon sadece temel authorizer işlemlerini yapacak.
     const response = {
         ...generateAuthResponse("public", "Allow"),
-        context: {
-            academy: JSON.stringify(academy)
-        },
+        context: {}
     };
     console.log("AUTHORIZER response", response);
-
-    await closeMongodbConnection();
     return response;
 };

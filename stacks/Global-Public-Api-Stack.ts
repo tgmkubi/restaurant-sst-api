@@ -4,8 +4,8 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import * as sst from "sst/constructs";
 
 import { StackContext } from "sst/constructs";
-import {apiFnBuilder} from "./helpers/utils";
-import {ConfigStack} from "./ConfigStack";
+import { apiFnBuilder } from "./helpers/utils";
+import { ConfigStack } from "./ConfigStack";
 
 export function GlobalPublicApiStack({ stack }: StackContext) {
 
@@ -42,7 +42,10 @@ export function GlobalPublicApiStack({ stack }: StackContext) {
         },
         defaults: {
             function: {
-                environment: {},
+                environment: {
+                    MONGO_DB_SECRET_NAME: mongoDbSecret.secretName,
+                    GLOBAL_COGNITO_USER_POOL_ID: globalCognitoUserPool.userPoolId,
+                },
                 timeout: 60,
                 runtime: "nodejs20.x",
             },
@@ -52,40 +55,28 @@ export function GlobalPublicApiStack({ stack }: StackContext) {
         },
 
         routes: {
-            "POST /auth/login": apiFnBuilder({
+            // ----------------- COMPANY -----------------
+            "GET /company": apiFnBuilder({
                 apiName,
                 stage: stack.stage,
-                handler: `${folderPrefix}/auth/actions.login`,
-                environment: {
-                    GLOBAL_COGNITO_USER_POOL_CLIENT_ID: globalCognitoUserPool.userPoolClientId
-                },
-                permissions: ["cognito-idp:InitiateAuth"],
+                handler: `${folderPrefix}/company/actions.listCompany`,
+            }),
+            "GET /company/{id}": apiFnBuilder({
+                apiName,
+                stage: stack.stage,
+                handler: `${folderPrefix}/company/actions.getCompany`,
             }),
 
-            // --------- ACADEMY ----------------
-            "GET /academy/{domain}": apiFnBuilder({
+            // ----------------- RESTAURANT -----------------
+            "GET /company/{companyId}/restaurant": apiFnBuilder({
                 apiName,
                 stage: stack.stage,
-                handler: `${folderPrefix}/academy/actions.getAcademy`,
+                handler: `${folderPrefix}/restaurant/actions.listRestaurants`,
             }),
-
-            /* const createGlobalAdminUserFn = new sst.Function(stack, "CreateGlobalAdminUserFn", {
-                handler: `${functionFolderPrefix}/Users/functions/initial.createGlobalAdminUser`,
-                environment: {
-                    MONGO_DB_SECRET_NAME: mongoDbSecret.secretName,
-                },
-                permissions: ["secretsmanager:GetSecretValue"],
-            }); */
-
-            "GET /test/uri": apiFnBuilder({
+            "GET /company/{companyId}/restaurant/{id}": apiFnBuilder({
                 apiName,
                 stage: stack.stage,
-                handler: `${folderPrefix}/test/actions.getUri`,
-                environment: {
-                    MONGO_DB_SECRET_NAME: mongoDbSecret.secretName,
-                    MONGO_DB_SECRET_VALUE: mongoDbSecret.secretValue,
-                },
-                permissions: ["secretsmanager:GetSecretValue"],
+                handler: `${folderPrefix}/restaurant/actions.getRestaurant`,
             }),
         },
     });
@@ -99,12 +90,14 @@ export function GlobalPublicApiStack({ stack }: StackContext) {
     //     stage: globalPublicApi.cdk.httpApi.defaultStage,
     // });
 
-    globalPublicApi.attachPermissions([]);
+    globalPublicApi.attachPermissions([
+        "secretsmanager:GetSecretValue",
+    ]);
 
     stack.addOutputs({
         ApiId: globalPublicApi.id,
         ApiHttpId: globalPublicApi.httpApiId,
         ApiEndpoint: globalPublicApi.url,
-        ApiBaseUrl: `https://api.global.${process.env.DOMAIN}/public/p3`,
+        ApiBaseUrl: `https://api.global.${process.env.DOMAIN}/public/p1`,
     });
 }

@@ -17,10 +17,7 @@ export interface IUserData {
     lastName: string;
     role: UserRolesEnum;    
     companyId?: Types.ObjectId;
-
-    createdAt?: Date;
-    updatedAt?: Date;
 }
 
-export interface IUser extends IDataItem<IUserData> {}
+export interface IUser extends IDataItem<IUserData>, IUserData {}
 export interface IUserMiddyModel extends IDataModel<IUserData> {}

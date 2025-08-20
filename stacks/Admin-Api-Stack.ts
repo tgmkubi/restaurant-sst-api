@@ -57,29 +57,12 @@ export function AdminApiStack({ stack }: StackContext) {
         },
 
         routes: {
-            "POST /{academyName}/users": apiFnBuilder({
+            /* "POST /{academyName}/users": apiFnBuilder({
                 apiName,
                 stage: stack.stage,
                 handler: `${folderPrefix}/users/actions.createUser`,
                 permissions: ["cognito-idp:AdminCreateUser"]
-            }),
-            "GET /{academyName}/users": apiFnBuilder({
-                apiName,
-                stage: stack.stage,
-                handler: `${folderPrefix}/users/actions.listUsers`,
-            }),
-            "GET /{academyName}/users/{id}": apiFnBuilder({
-                apiName,
-                stage: stack.stage,
-                handler: `${folderPrefix}/users/actions.getUser`,
-            }),
-            "DELETE /{academyName}/users/{id}": apiFnBuilder({
-                apiName,
-                stage: stack.stage,
-                handler: `${folderPrefix}/users/actions.deleteUser`,
-                permissions: ["cognito-idp:AdminDeleteUser"],
-            }),
-
+            }), */
         },
     });
 
@@ -99,6 +82,6 @@ export function AdminApiStack({ stack }: StackContext) {
         ApiId: adminApi.id,
         ApiHttpId: adminApi.httpApiId,
         ApiEndpoint: adminApi.url,
-        ApiBaseUrl: `https://api.academy.${process.env.DOMAIN}/admin/p1`,
+        ApiBaseUrl: `https://api.tenant.${process.env.DOMAIN}/admin/p1`,
     });
 }

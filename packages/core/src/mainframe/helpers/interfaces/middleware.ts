@@ -1,6 +1,7 @@
-import { APIGatewayEventRequestContextLambdaAuthorizer } from "aws-lambda";
-import {IUser} from "../../database/interfaces/user";
-import {IAcademy, IAcademyData} from "../../database/interfaces/academy";
+import { APIGatewayEventRequestContextLambdaAuthorizer, APIGatewayProxyEvent } from "aws-lambda";
+import { IUser } from "../../database/interfaces/user";
+import { Model } from "mongoose";
+import { ICompany } from "../../database/interfaces/company";
 
 export type IPermissionGroups = {
     requiredPermissionGroups: string[] | undefined;
@@ -10,32 +11,56 @@ export type IInitMongoDbConnection = {
 };
 
 
-export interface IAuthMiddlewareOptions extends IPermissionGroups {}
-export interface IMongoDbMiddlewareOptions extends IInitMongoDbConnection {}
+export interface IAuthMiddlewareOptions extends IPermissionGroups { }
+export interface IMongoDbMiddlewareOptions extends IInitMongoDbConnection {
+    isGlobalEndpoint?: boolean;
+    isTenantEndpoint?: boolean;
+}
 
 interface ILambdaContext {
     user: IUser;
-    academy: IAcademy;
+    company: ICompany;
 }
 
 interface IAPIGatewayEventRequestContextLambdaAuthorizer
-    extends APIGatewayEventRequestContextLambdaAuthorizer<ILambdaContext> {}
+    extends APIGatewayEventRequestContextLambdaAuthorizer<ILambdaContext> { }
 
-export interface IAPIGatewayProxyEventPublic extends IAPIGatewayEventRequestContextLambdaAuthorizer {
-    academy: IAcademyData;
-    body: {
-        email: string;
-        password: string;
-    }
+export interface IAPIGatewayProxyEventPublic extends APIGatewayProxyEvent {
+    // academy?: IAcademyData;
+    globalModels?: {
+        Company: Model<ICompany>;
+        User: Model<IUser>;
+    };
+    tenantModels?: any;
+    tenantContext?: {
+        companyId: string;
+        databaseName: string;
+        subdomain: string;
+        company: any;
+        models: any;
+    };
 }
 
 export interface IAPIGatewayProxyEventWithUser extends IAPIGatewayEventRequestContextLambdaAuthorizer {
-    academy: IAcademy;
     user: IUser;
+    globalModels?: {
+        Company: Model<ICompany>;
+        User: Model<IUser>;
+    };
+    tenantModels?: any;
+    tenantContext?: {
+        companyId: string;
+        databaseName: string;
+        subdomain: string;
+        company: any;
+        models: any;
+    };
+    pathParameters: { [name: string]: string } | null;
+    queryStringParameters: { [name: string]: string } | null;
 }
 
 export interface IAPIGatewayProxyEvent extends IAPIGatewayEventRequestContextLambdaAuthorizer {
-    academy: IAcademy;
+    company: ICompany;
 }
 
 export interface IAPIGatewayProxyEventWithUserAndBody<TBody = object> extends IAPIGatewayProxyEventWithUser {

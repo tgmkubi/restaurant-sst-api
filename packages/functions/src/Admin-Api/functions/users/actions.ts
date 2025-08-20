@@ -1,4 +1,4 @@
-import {lambdaHandlerAcademy} from "@kss-backend/core/mainframe/core/middy";
+// ...existing code...
 import {apiResponse} from "@kss-backend/core/mainframe/helpers/response";
 import {adminCreateUser, adminDeleteUser} from "@kss-backend/core/mainframe/helpers/aws/cognito";
 import {createAdminUserValidator} from "./validators";
@@ -6,118 +6,10 @@ import {UserModel} from "@kss-backend/core/mainframe/database/mongodb/models/use
 import createError from "http-errors";
 import {UserRolesEnum} from "@kss-backend/core/mainframe/database/interfaces/user";
 
-export const createUser = lambdaHandlerAcademy(
-    async (event: any) => {
-        const { email, firstName, lastName, role } = event.body;
+// ...academy ile ilgili kodlar kaldırıldı. createUser fonksiyonu güncellenmeli...
 
-        // @ts-ignore
-        if (role && !UserRolesEnum[role]) {
-            throw new createError.BadRequest(`Invalid role: ${role}`);
-        }
+// ...academy ile ilgili kodlar kaldırıldı. listUsers fonksiyonu güncellenmeli...
 
-        const resCognito = await adminCreateUser(
-            event.academy.cognitoUserPoolId,
-            email,
-            [
-                {
-                    Name: "email",
-                    Value: email,
-                },
-                {
-                    Name: "given_name",
-                    Value: firstName,
-                },
-                {
-                    Name: "family_name",
-                    Value: lastName,
-                },
-                {
-                    Name: "custom:companyId",
-                    Value: event.academy.id
-                }
-            ]
-        );
-        const cognitoSub = resCognito?.User?.Attributes?.find(attr => attr.Name === 'sub')?.Value || undefined;
-        let dbUser = undefined;
+// ...academy ile ilgili kodlar kaldırıldı. getUser fonksiyonu güncellenmeli...
 
-        if (cognitoSub) {
-            dbUser = await UserModel.create({
-                cognitoSub: cognitoSub,
-                cognitoUsername: resCognito.User?.Username,
-                email,
-                firstName,
-                lastName,
-                role: role || UserRolesEnum.ADMIN,
-                companyId: event.academy.id,
-                createdBy: event.user.id
-            })
-        } else {
-            throw new createError.InternalServerError("Failed to create user in Cognito");
-        }
-
-        return apiResponse(200, {
-            user: dbUser,
-        });
-    },
-    {
-        requestValidator: createAdminUserValidator,
-        requiredPermissionGroups: [UserRolesEnum.GLOBAL_ADMIN, UserRolesEnum.ADMIN],
-        initMongoDbConnection: true
-    },
-);
-
-export const listUsers = lambdaHandlerAcademy(
-    async (event: any) => {
-
-            const users = await UserModel.find()
-
-            return apiResponse(200, {
-                users: users
-            });
-    },{
-        requiredPermissionGroups: [UserRolesEnum.GLOBAL_ADMIN, UserRolesEnum.ADMIN],
-        initMongoDbConnection: true
-    },
-);
-
-export const getUser = lambdaHandlerAcademy(
-    async (event: any) => {
-        const { id } = event.pathParameters;
-
-        const user = await UserModel.findOne({ _id: id });
-        if (!user) {
-            throw new createError.NotFound("User not found");
-        }
-
-        return apiResponse(200, {
-            user,
-        });
-    },
-    {
-        requiredPermissionGroups: [UserRolesEnum.GLOBAL_ADMIN, UserRolesEnum.ADMIN],
-        initMongoDbConnection: true
-    },
-);
-
-export const deleteUser = lambdaHandlerAcademy(
-    async (event: any) => {
-        const { id } = event.pathParameters;
-
-        const user = await UserModel.findOneAndDelete({ _id: id});
-        if (!user) {
-            throw new createError.NotFound("User not found");
-        }
-        console.log(user)
-
-        await adminDeleteUser(event.academy.cognitoUserPoolId, user.cognitoUsername);
-        await user.deleteOne();
-
-        return apiResponse(200, {
-            message: "User deleted successfully",
-        });
-    },
-    {
-        requiredPermissionGroups: [UserRolesEnum.GLOBAL_ADMIN, UserRolesEnum.ADMIN],
-        initMongoDbConnection: true
-    },
-);
+// ...academy ile ilgili kodlar kaldırıldı. deleteUser fonksiyonu güncellenmeli...

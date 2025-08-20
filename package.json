@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
+    "@types/qrcode": "^1.5.5",
     "aws-cdk-lib": "2.110.1",
     "constructs": "10.3.0",
     "sst": "2.36.7",
@@ -47,6 +48,7 @@
     "mongodb": "^6.16.0",
     "mongoose": "^8.15.0",
     "node-fetch": "^3.3.2",
-    "papaparse": "^5.5.2"
+    "papaparse": "^5.5.2",
+    "qrcode": "^1.5.4"
   }
 }

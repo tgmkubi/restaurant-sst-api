@@ -5,6 +5,7 @@ import {GlobalAdminApiStack} from "./stacks/Global-Admin-Api-Stack";
 import {GlobalPublicApiStack} from "./stacks/Global-Public-Api-Stack";
 import {AdminApiStack} from "./stacks/Admin-Api-Stack";
 import {ProtectedApiStack} from "./stacks/Protected-Api-Stack";
+import { PublicApiStack } from "./stacks/Public-Api-Stack";
 
 export default {
     config() {
@@ -43,6 +44,7 @@ export default {
 
         app.stack(AdminApiStack, { stackName: stackName("AdminApi"), id: stackId("AdminApi") });
         app.stack(ProtectedApiStack, { stackName: stackName("ProtectedApi"), id: stackId("ProtectedApi") });
+        app.stack(PublicApiStack, { stackName: stackName("PublicApi"), id: stackId("PublicApi") });
 
 
     },

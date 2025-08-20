@@ -24,6 +24,8 @@ interface LambdaOptions {
     requiredPermissionGroups?: PermissionGroups["requiredPermissionGroups"];
     requiredLicences?: string[];
     initMongoDbConnection?: boolean;
+    isGlobalEndpoint?: boolean;
+    isTenantEndpoint?: boolean;
 }
 
 export type PermissionGroups = {
@@ -31,7 +33,7 @@ export type PermissionGroups = {
 };
 
 export const lambdaHandlerGlobalAdmin = (handler: Handler, opts?: LambdaOptions) => {
-    let requestValidator, requiredPermissionGroups, requiredLicences, initMongoDbConnection;
+    let requestValidator, requiredPermissionGroups, requiredLicences, initMongoDbConnection, isGlobalEndpoint;
     if (opts && opts.requestValidator) {
         requestValidator = opts.requestValidator;
     } else {
@@ -44,7 +46,9 @@ export const lambdaHandlerGlobalAdmin = (handler: Handler, opts?: LambdaOptions)
     if (opts && opts.initMongoDbConnection) {
         initMongoDbConnection = opts.initMongoDbConnection;
     }
-
+    if (opts && opts.isGlobalEndpoint) {
+        isGlobalEndpoint = opts.isGlobalEndpoint;
+    }
 
     return middy(handler)
         .use(httpEventNormalizerMiddleware())
@@ -93,13 +97,14 @@ export const lambdaHandlerGlobalAdmin = (handler: Handler, opts?: LambdaOptions)
         .use(
             mongoDbMiddleware({
                 initMongoDbConnection: !!initMongoDbConnection,
+                isGlobalEndpoint: !!isGlobalEndpoint,
             })
         )
 
 };
 
 export const lambdaHandlerGlobalPublic = (handler: Handler, opts: LambdaOptions) => {
-    let { requestValidator, initMongoDbConnection } = opts || {};
+    let { requestValidator, initMongoDbConnection, isGlobalEndpoint } = opts || {};
 
     requestValidator = requestValidator || {};
 
@@ -150,6 +155,128 @@ export const lambdaHandlerGlobalPublic = (handler: Handler, opts: LambdaOptions)
         .use(
             mongoDbMiddleware({
                 initMongoDbConnection: !!initMongoDbConnection,
+                isGlobalEndpoint: !!isGlobalEndpoint,
+            })
+        )
+};
+
+// New handler for tenant-specific endpoints (public access)
+export const lambdaHandlerTenantPublic = (handler: Handler, opts?: LambdaOptions) => {
+    let { requestValidator, initMongoDbConnection } = opts || {};
+
+    requestValidator = requestValidator || {};
+
+    return middy(handler)
+        .use(httpEventNormalizerMiddleware())
+        .use(httpHeaderNormalizerMiddleware())
+        .use(httpUrlencodePathParametersParserMiddleware())
+        .use(
+            httpUrlencodeBodyParserMiddleware({
+                disableContentTypeError: true,
+            }),
+        )
+        .use(
+            httpJsonBodyParserMiddleware({
+                disableContentTypeError: true,
+            }),
+        )
+        .use(
+            httpMultipartBodyParserMiddleware({
+                disableContentTypeError: true,
+            }),
+        )
+        .use(httpSecurityHeadersMiddleware())
+        .use(httpCorsMiddleware())
+        .use(httpContentEncodingMiddleware())
+        .use(
+            httpResponseSerializerMiddleware({
+                serializers: [
+                    {
+                        regex: /^application\/json$/,
+                        serializer: ({ body }) => JSON.stringify(body),
+                    },
+                ],
+            }),
+        )
+        .use(httpPartialResponseMiddleware())
+        .use(
+            validator({
+                eventSchema: transpileSchema(requestValidator),
+            }),
+        )
+        .use(httpErrorHandlerMiddleware())
+        .use(
+            mongoDbMiddleware({
+                initMongoDbConnection: !!initMongoDbConnection,
+                isTenantEndpoint: true,
+            })
+        )
+};
+
+// New handler for tenant-specific endpoints (authenticated)
+export const lambdaHandlerTenantAuth = (handler: Handler, opts?: LambdaOptions) => {
+    let requestValidator, requiredPermissionGroups, initMongoDbConnection;
+    if (opts && opts.requestValidator) {
+        requestValidator = opts.requestValidator;
+    } else {
+        requestValidator = {};
+    }
+
+    if (opts && opts.requiredPermissionGroups) {
+        requiredPermissionGroups = opts.requiredPermissionGroups;
+    }
+    if (opts && opts.initMongoDbConnection) {
+        initMongoDbConnection = opts.initMongoDbConnection;
+    }
+
+    return middy(handler)
+        .use(httpEventNormalizerMiddleware())
+        .use(httpHeaderNormalizerMiddleware())
+        .use(httpUrlencodePathParametersParserMiddleware())
+        .use(
+            httpUrlencodeBodyParserMiddleware({
+                disableContentTypeError: true,
+            }),
+        )
+        .use(
+            httpJsonBodyParserMiddleware({
+                disableContentTypeError: true,
+            }),
+        )
+        .use(
+            httpMultipartBodyParserMiddleware({
+                disableContentTypeError: true,
+            }),
+        )
+        .use(httpSecurityHeadersMiddleware())
+        .use(httpCorsMiddleware())
+        .use(httpContentEncodingMiddleware())
+        .use(
+            httpResponseSerializerMiddleware({
+                serializers: [
+                    {
+                        regex: /^application\/json$/,
+                        serializer: ({ body }) => JSON.stringify(body),
+                    },
+                ],
+            }),
+        )
+        .use(httpPartialResponseMiddleware())
+        .use(
+            validator({
+                eventSchema: transpileSchema(requestValidator),
+            }),
+        )
+        .use(httpErrorHandlerMiddleware())
+        .use(
+            authMiddleware({
+                requiredPermissionGroups,
+            }),
+        )
+        .use(
+            mongoDbMiddleware({
+                initMongoDbConnection: !!initMongoDbConnection,
+                isTenantEndpoint: true,
             })
         )
 };
