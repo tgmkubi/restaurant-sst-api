@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getRestaurantHandler } from "../../src/Global-Public-Api/functions/restaurant/get-restaurant";
+import { getRestaurantHandler } from "../../../src/Global-Public-Api/functions/restaurant/get-restaurant";
 
 const mockTenantModels = {
   Restaurant: {

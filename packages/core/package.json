@@ -37,6 +37,7 @@
     "@middy/validator": "^5.3.2",
     "@smithy/node-http-handler": "^2.3.1",
     "@types/http-errors": "^2.0.4",
+    "axios": "^1.11.0",
     "ulid": "^2.3.0"
   }
 }
